@@ -50,17 +50,35 @@ type TriangleIndicies struct {
 }
 
 type VertexData struct {
-	X        float32
-	Y        float32
-	Z        float32
-	Unknown1 float32
-	NormalX  float32
-	NormalY  float32
-	NormalZ  float32
-	Unknown2 uint32
-	Unknown3 [4]float32
-	UVMapU   float32
-	UVMapV   float32
-	FFFFFFFF uint32
-	Unknown4 uint32
+	LocationX float32
+	LocationY float32
+	LocationZ float32
+	Unknown1  float32
+	NormalX   float32
+	NormalY   float32
+	NormalZ   float32
+	Unknown2  uint32
+	Unknown3  [4]float32
+	UVMapU    float32
+	UVMapV    float32
+	FFFFFFFF  uint32
+	Unknown4  uint32
+}
+
+type BoneData struct {
+	Name                  [16]byte
+	Unknown1              uint16
+	ParentBoneID          uint16
+	Unknown2              uint16
+	BoneID                uint16
+	LocationX             float32 // Location and Rotation is relative to parent bone.
+	LocationY             float32
+	LocationZ             float32
+	RotationEulerRadianX1 float32
+	RotationEulerRadianY1 float32
+	RotationEulerRadianZ1 float32
+	RotationEulerRadianX2 float32
+	RotationEulerRadianY2 float32
+	RotationEulerRadianZ2 float32
+	Unknown3              [6]float32
 }

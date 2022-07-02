@@ -23,10 +23,10 @@ func ssx() {
 		},
 	}
 
-	prettyPrint(fileHeader)
+	PrettyPrint(fileHeader)
 }
 
-func prettyPrint(structure FileHeader) {
+func PrettyPrint(structure FileHeader) {
 	empJSON, err := json.MarshalIndent(structure, "", "  ")
 	if err != nil {
 		log.Fatalf(err.Error())

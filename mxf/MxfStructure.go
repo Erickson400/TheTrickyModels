@@ -71,7 +71,7 @@ type BoneData struct {
 	ParentBoneID          uint16
 	Unknown2              uint16
 	BoneID                uint16
-	LocationX             float32 // Location and Rotation is relative to parent bone.
+	LocationX             float32 // Location and Rotation cord is relative to parent bone.
 	LocationY             float32
 	LocationZ             float32
 	RotationEulerRadianX1 float32

@@ -7,8 +7,8 @@ type FileHeader struct {
 	ModelRootOffset       uint32
 
 	/*
-		ModelHeaders is not part of the file header, but we put it here
-		so that we know it starts right after it.
+		ModelHeaders are not part of the file header, but we put it here
+		so that we know they starts right after it.
 	*/
 	ModelHeaders []ModelHeader // size is ModelCount
 }

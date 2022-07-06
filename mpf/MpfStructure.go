@@ -1,16 +1,32 @@
 package main
 
 type FileHeader struct {
-	Unknown               uint32 // Always stores 4
-	ModelCount            uint16
-	ModelHeaderListOffset uint16 // Points to first ModelHeader
-	ModelRootOffset       uint32
+
+	/*
+		Always stores 4
+	*/
+	Unknown uint32
+
+	/*
+		The size of the ModelHeaders list
+	*/
+	ModelCount uint16
+
+	/*
+		Points to the first ModelHeader (from the list)
+	*/
+	ModelHeaderListOffset uint16
+
+	/*
+
+	 */
+	ModelRootOffset uint32
 
 	/*
 		ModelHeaders is not part of the file header, but we put it here
 		so that we know it starts right after it.
 	*/
-	ModelHeaders []ModelHeader // size is ModelCount
+	ModelHeaderList []ModelHeader // size is ModelCount
 }
 
 type ModelHeader struct {

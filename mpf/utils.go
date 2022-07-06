@@ -46,14 +46,17 @@ func BytesToMpfStruct(b []byte) (head FileHeader) {
 	Read(&head.ModelRootOffset)
 
 	// ModelHeaders
+	head.ModelHeaders = make([]ModelHeader, head.ModelCount)
+	for i := 0; i < int(head.ModelCount); i++ { //
+		Read(&head.ModelHeaders[i])
+	}
 
-	//fmt.Printf("%+v", head)
-	PrettyPrint(head)
-
+	PrettyPrint(head.ModelHeaders[0])
+	PrettyPrint(head.ModelHeaders[1])
 	return
 }
 
-func PrettyPrint(structure FileHeader) {
+func PrettyPrint(structure any) {
 	empJSON, err := json.MarshalIndent(structure, "", "  ")
 	if err != nil {
 		panic(err)

@@ -13,6 +13,8 @@ func main() {
 	// arg2: [obj destination path]
 	// objexporter C:\Users\munoz\Documents\GitHub\SSXTrickyModelExporter\resources\board.mpf C:\Users\munoz\Documents\GitHub\SSXTrickyModelExporter\resources
 
+	// go run . ./resources/board.mpf  ./
+
 	// objexporter
 
 	// Help

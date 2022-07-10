@@ -27,7 +27,7 @@ func MpfToBytes(filename string) []byte {
 	return data
 }
 
-func BytesToMpfStruct(b []byte) (head FileHeader) {
+func BytesToMpfStruct(b []byte) (file TheFile) {
 	// Setup the buffer for reading in little endian
 	buf := bytes.NewReader(b)
 	Read := func(p any) { //Takes in a Pointer/Address
@@ -37,22 +37,36 @@ func BytesToMpfStruct(b []byte) (head FileHeader) {
 		}
 	}
 
-	// Start Reading data
+	// Start Reading TheFile
 
-	// FileHeader
-	buf.Seek(4, os.SEEK_CUR)
-	Read(&head.ModelCount)
-	Read(&head.ModelHeaderListOffset)
-	Read(&head.ModelRootOffset)
+	// File Header
+	Read(&file.Header)
 
-	// ModelHeaders
-	head.ModelHeaders = make([]ModelHeader, head.ModelCount)
-	for i := 0; i < int(head.ModelCount); i++ { //
-		Read(&head.ModelHeaders[i])
+	// Model headers
+	file.ModelHeaderList = make([]ModelHeader, file.Header.ModelCount)
+	for i := 0; i < int(file.Header.ModelCount); i++ { //
+		Read(&file.ModelHeaderList[i])
 	}
 
-	PrettyPrint(head.ModelHeaders[0])
-	PrettyPrint(head.ModelHeaders[1])
+	// Model data
+
+	//file.ModelDataList = make([]ModelData, file.Header.ModelCount)
+
+	//Read(&file.ModelDataList)
+
+	// ModelHeaders
+	// head.ModelHeaders = make([]ModelHeader, head.ModelCount)
+	// for i := 0; i < int(head.ModelCount); i++ { //
+	// 	Read(&head.ModelHeaders[i])
+	// }
+	//buf.Seek(4, os.SEEK_CUR)
+	// PrettyPrint(head.ModelHeaders[0])
+
+	for i := 0; i < int(file.Header.ModelCount); i++ { //
+		fmt.Println("------------------------ID:", i, "\b, Model Name:", string(file.ModelHeaderList[i].Name[:]))
+		PrettyPrint(file.ModelHeaderList[i])
+	}
+
 	return
 }
 

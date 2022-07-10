@@ -1,68 +1,114 @@
 package main
 
+/*
+	-> means holds
+	Hirarchy: Mpf File -> Models -> Meshes -> TriStrips.
+
+	Model = ModelHeader + ModelData
+*/
+
+type TheFile struct {
+	Header          FileHeader
+	ModelHeaderList []ModelHeader
+	ModelDataList   []ModelData
+}
+
 type FileHeader struct {
-
 	/*
-		Always stores 4
+		Always stores 4.
+		Might be the version of the format or decoder.
 	*/
-	Unknown uint32
+	Version uint32
 
 	/*
-		The size of the ModelHeaders list
+		The amount of Models.
+		TheFile.ModelHeaderList has ModelCount amount of headers.
+		TheFile.ModelDataList has ModelCount amount of Data.
 	*/
 	ModelCount uint16
 
 	/*
-		Points to the first ModelHeader (from the list)
+		Points to the first ModelHeader (from TheFile.ModelHeaderList)
 	*/
-	ModelHeaderListOffset uint16
+	OffsetOfModelHeaderList uint16
 
 	/*
-
-	 */
-	ModelRootOffset uint32
-
-	/*
-		ModelHeaders is not part of the file header, but we put it here
-		so that we know it starts right after it.
+		Points to the first ModelData (from TheFile.ModelDataList)
 	*/
-	ModelHeaderList []ModelHeader // size is ModelCount
+	OffsetOfModelDataList uint32
 }
 
 type ModelHeader struct {
-	ModelName [16]byte
+	/*
+		Name of model (ASCII string of bytes)
+	*/
+	Name [16]byte
 
 	/*
-		The decoder adds this to FileHeader.ModelRootOffset.
+		It points to the current model from TheFile.OffsetOfModelDataList.
+		Its relative to FileHeader.OffsetOfModelDataList.
+
+		The decoder adds this to FileHeader.OffsetOfModelDataList.
 		The sum is where the Model starts.
-		ModelStart is the alias for ModelRelativeOffset + FileHeader.ModelRootOffset.
+		ModelStart is the alias for ModelRelativeOffset + FileHeader.OffsetOfModelDataList.
 	*/
-	ModelRelativeOffset   uint32
-	ModelSize             uint32 // size represented in bytes
-	OffsetOfModelData     uint32 // Relative to ModelStart. Points to Model
-	OffsetOfBoneWeights1  uint32 // Relative to ModelStart
-	Unknown1              uint32
-	OffsetOfMeshData      uint32 // Relative to ModelStart. Points to first Mesh in the model's Mesh array
-	Unknown2              uint32
-	OffsetOfBoneWeights2  uint32 // Relative to ModelStart
-	OffsetOfNumListRef    uint32 // Relative to ModelStart
-	OffsetOfBoneWeights3  uint32 // Relative to ModelStart
-	Unknown3              uint32
-	Unknown4              uint32
-	Unknown5              uint16
-	Unknown6              uint16
-	CountOfBoneWeights    uint32 // Relative to ModelStart
-	CountOfInternalMeshes uint16 // Ammount of Meshes
+	RelativeOffset uint32
+
+	/*
+		Size represented in bytes.
+		Tells how much data the model takes. Good for reading an entire model
+		 all based on the ModelHeader.
+		This is good because not all models are the same size.
+	*/
+	Size uint32
+
+	/*
+		Not yet clear what this is.
+		Model data offset goes to some data above the tristrips.
+	*/
+	OffsetToDataAboveTristrips uint32 // Relative to ModelStart
+
+	OffsetOfBoneWeights1 uint32 // Relative to ModelStart
+	Unknown1             uint32
+
+	/*
+		Points to first Mesh in the model's Mesh array
+	*/
+	OffsetOfMeshData uint32 // Relative to ModelStart.
+
+	Unknown2             uint32
+	OffsetOfBoneWeights2 uint32 // Relative to ModelStart
+	OffsetOfNumListRef   uint32 // Relative to ModelStart
+	OffsetOfBoneWeights3 uint32 // Relative to ModelStart
+	Unknown3             uint32
+	Unknown4             uint16
+	Unknown5             uint16 // Count?
+	Unknown6             uint16 // Bone Count?
+	CountOfBoneWeights   uint16 // Relative to ModelStart
+
+	/*
+	 Ammount of Meshes
+	*/
+	CountOfInternalMeshes uint16
 	Unknown7              uint16
 	CountOfBones          uint16
-	Unknown8              [8]byte
+	Unknown8              uint16
+	FillerPadding         uint32
 }
 
-type Model struct {
-	// Missing Stuff...
-	MeshData []Mesh // Size is CountOfInternalMeshes from the ModelHeader
+type ModelData struct {
+	FirstName [4]byte
+	Unknown1  uint32 // stores 0x00202020
+	Unknown2  uint32 // stores 0x00202020
+	LastName  [4]byte
+	Unknown3  uint32 // stores 0x00202020
+
+	// ...Missing stuff
 }
 
+/*
+
+ */
 type Mesh struct {
 	CountOfTotalRows  uint24
 	Unknown1          byte
@@ -81,13 +127,10 @@ type Mesh struct {
 	NormBlock         NormalBlock
 	VertBlock         VertexBlock
 }
-type uint24 struct {
-	b [3]byte
-}
 
 type TriStripCountRow struct {
 	TriStripLength uint32
-	padding        [12]byte
+	Padding        [12]byte
 }
 
 type UVBlock struct {
@@ -130,10 +173,15 @@ type VertexBlock struct {
 	VertexCountPrefix byte
 	CountOfVertices   byte
 	VertexCountSuffix byte
-	Vertices          []VertexData // Size of CountOfNormals
+	Vertices          []VertexData // Size of CountOfVertices
 }
+
 type VertexData struct {
 	X float32
 	Y float32
 	Z float32
+}
+
+type uint24 struct {
+	B [3]byte
 }

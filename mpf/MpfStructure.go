@@ -9,14 +9,14 @@ package main
 
 type TheFile struct {
 	Header          FileHeader
-	ModelHeaderList []ModelHeader
-	ModelDataList   []ModelData
+	ModelHeaderList []ModelHeader // Size is Header.ModelCount
+	ModelDataList   []ModelData   // Size is Header.ModelCount
 }
 
 type FileHeader struct {
 	/*
-		Always stores 4.
-		Might be the version of the format or decoder.
+		Always stores 8.
+		Might be the version/type of the format or decoder for PS2.
 	*/
 	Version uint32
 
@@ -76,23 +76,19 @@ type ModelHeader struct {
 	*/
 	OffsetOfMeshData uint32 // Relative to ModelStart.
 
-	Unknown2             uint32
-	OffsetOfBoneWeights2 uint32 // Relative to ModelStart
-	OffsetOfNumListRef   uint32 // Relative to ModelStart
-	OffsetOfBoneWeights3 uint32 // Relative to ModelStart
-	Unknown3             uint32
-	Unknown4             uint16
-	Unknown5             uint16 // Count?
-	Unknown6             uint16 // Bone Count?
-	CountOfBoneWeights   uint16 // Relative to ModelStart
-
-	/*
-	 Ammount of Meshes
-	*/
+	Unknown2              uint32
+	OffsetOfBoneWeights2  uint32 // Relative to ModelStart
+	OffsetOfNumListRef    uint32 // Relative to ModelStart
+	OffsetOfBoneWeights3  uint32 // Relative to ModelStart
+	Unknown3              uint32
+	Unknown4              uint16
+	Unknown5              uint16 // Count?
+	Unknown6              uint16 // Bone Count?
+	CountOfBoneWeights    uint16 // Relative to ModelStart
 	CountOfInternalMeshes uint16
 	Unknown7              uint16
-	CountOfBones          uint16
 	Unknown8              uint16
+	Unknown9              uint16
 	FillerPadding         uint32
 }
 
@@ -102,8 +98,23 @@ type ModelData struct {
 	Unknown2  uint32 // stores 0x00202020
 	LastName  [4]byte
 	Unknown3  uint32 // stores 0x00202020
+	// ...Unknown Missing Data
 
-	// ...Missing stuff
+	/*
+		Starts at ModelHeader.ModelStart + Modelheader.OffsetOfMeshData
+	*/
+	Meshes []Mesh // Unknown amount of meshes
+	// ...Unknown Missing Data
+
+	/*
+		01000060 00000000 00000000 00000000
+		00000000 01010001 00000000 00000000
+		or
+		00000000 00000000 00000000 01010001
+		00000000 00000010 00000000 00000014
+	*/
+	Footer [8]byte
+	// ...Unknown Missing Data
 }
 
 /*

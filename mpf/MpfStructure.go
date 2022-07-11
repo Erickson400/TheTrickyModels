@@ -113,7 +113,7 @@ type ModelData struct {
 		00000000 00000000 00000000 01010001
 		00000000 00000010 00000000 00000014
 	*/
-	Footer [8]byte
+	Footer [8]uint32
 	// ...Unknown Missing Data
 }
 

@@ -121,22 +121,70 @@ type ModelData struct {
 
  */
 type Mesh struct {
-	CountOfTotalRows  uint24
-	Unknown1          byte
-	Unknown2          [12]byte
-	Unknown3          [13]byte
-	PrefixCount       byte
-	CountMeshInfoRows byte // MeshInfoRows + TriStripRows
-	SuffixOfRows      byte
-	MeshInfoRow1      [16]byte
-	MeshInfoRow2      [16]byte
-	TriStripCountRows []TriStripCountRow // Size is CountMeshInfoRows - 2
-	CountOfVertices   uint24
-	Unknown4          byte
-	Unknown5          [12]byte
-	UvBlock           UVBlock
-	NormBlock         NormalBlock
-	VertBlock         VertexBlock
+	/*
+		TriStripCountRow + InfoRows
+	*/
+	CountOfTotalRows Uint24
+
+	/*
+		Always 10
+	*/
+	Unknown1 byte
+
+	/*
+		Filler/Padding
+	*/
+	Unknown2 [12]byte
+
+	/*
+		Filler/Padding
+	*/
+	Unknown3 [13]byte
+
+	/*
+		Always 0x80
+	*/
+	PrefixCount byte
+
+	/*
+		Stores an amount of rows:
+		InfoRows + TriStripRows
+	*/
+	SumOfRows byte
+
+	/*
+		Always 0x6C
+	*/
+	SuffixOfRows byte
+	InfoRows     [2]Row
+
+	/*
+		Stores each tristrip's length
+	*/
+	TriStripRows []StripRow // Size is SumOfRows - 2
+
+	/*
+		Might be a vert count
+	*/
+	Unknown4 Uint24
+
+	/*
+		Always 10
+	*/
+	Unknown5  byte
+	Unknown6  [12]byte
+	UvBlock   UVBlock
+	NormBlock NormalBlock
+	VertBlock VertexBlock
+}
+
+type Row struct {
+	B [4]uint32
+}
+
+type StripRow struct {
+	CountOfVertices uint32
+	Padding         [3]uint32
 }
 
 type TriStripCountRow struct {
@@ -193,6 +241,6 @@ type VertexData struct {
 	Z float32
 }
 
-type uint24 struct {
+type Uint24 struct {
 	B [3]byte
 }

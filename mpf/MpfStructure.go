@@ -113,13 +113,10 @@ type ModelData struct {
 		00000000 00000000 00000000 01010001
 		00000000 00000010 00000000 00000014
 	*/
-	Footer [8]uint32
+	Footer [32]byte
 	// ...Unknown Missing Data
 }
 
-/*
-
- */
 type Mesh struct {
 	/*
 		TriStripCountRow + InfoRows
@@ -171,11 +168,19 @@ type Mesh struct {
 	/*
 		Always 10
 	*/
-	Unknown5  byte
-	Unknown6  [12]byte
-	UvBlock   UVBlock
-	NormBlock NormalBlock
-	VertBlock VertexBlock
+	Unknown5       byte
+	Unknown6       [12]byte
+	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000
+	UvBlock        UVBlock
+	ElementHeader2 [16]byte // Stores 00000000 00000030 00000000 00000000
+	NormBlock      NormalBlock
+	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
+	VertBlock      VertexBlock
+	/*
+		Stores 01000010 00000000 00000000 00000000 01010001 0A000014
+	*/
+	Footer   [24]byte
+	Unknown7 [8]byte
 }
 
 type Row struct {
@@ -184,7 +189,7 @@ type Row struct {
 
 type StripRow struct {
 	CountOfVertices uint32
-	Padding         [3]uint32
+	Padding         [12]byte
 }
 
 type TriStripCountRow struct {
@@ -193,16 +198,29 @@ type TriStripCountRow struct {
 }
 
 type UVBlock struct {
-	UVBlockHeader [16]byte
+
+	/*
+		Stores 00100000 00100000 00000020 50505050 (aka PPPP)
+	*/
+	Header        [16]byte
 	Unknown1      [12]byte
 	Unknown2      byte
 	UVCountPrefix byte
 	CountOfUVs    byte
 	UVCountSuffix byte
-	UV            []UVData // Size of CountOfUVs
+	UVData        []UV // Size is CountOfUVs
+
+	/*
+		Size is CountOfUVs * 8, then moduled by 16.
+		e.g.:
+			CountOfUVs = 58
+			TotalBytes = CountOfUVs * 8
+			FillerSize = TotalBytes % 16
+	*/
+	Filler []byte
 }
 
-type UVData struct {
+type UV struct {
 	U         uint16
 	V         uint16
 	UDistance uint16
@@ -210,32 +228,59 @@ type UVData struct {
 }
 
 type NormalBlock struct {
-	NormalBlockHeader [16]byte
+	/*
+		Stores 00000000 00800000 00000020 40404040 (aka @@@@)
+	*/
+	Header [16]byte
+
 	Unknown1          [12]byte
 	Unknown2          byte
 	NormalCountPrefix byte
 	CountOfNormals    byte
 	NormalCountSuffix byte
-	Normals           []NormalData // Size of CountOfNormals
+	Normals           []Normal // Size is CountOfNormals
+	/*
+		Size is CountOfNormals * 6, then moduled by 16.
+		e.g.:
+			CountOfNormals = 58
+			TotalBytes = CountOfNormals * 8
+			FillerSize = TotalBytes % 16
+			FillerSize = 16 - FillerSize
+	*/
+	Filler []byte
 }
 
-type NormalData struct {
+type Normal struct {
 	X uint16
 	Y uint16
 	Z uint16
 }
 
 type VertexBlock struct {
-	VertexBlockHeader [16]byte
+	/*
+		Stores 00000000 0000803F 00000020 40404040 (aka @@@@)
+	*/
+	Header [16]byte
+
 	Unknown1          [12]byte
 	Unknown2          byte
 	VertexCountPrefix byte
 	CountOfVertices   byte
 	VertexCountSuffix byte
-	Vertices          []VertexData // Size of CountOfVertices
+	Vertices          []Vertex // Size of CountOfVertices
+
+	/*
+		Size is CountOfVertices * 12, then moduled by 16.
+		e.g.:
+			CountOfVertices = 58
+			TotalBytes = CountOfVertices * 12
+			FillerSize = TotalBytes % 16
+			FillerSize = 16 - FillerSize
+	*/
+	Filler []byte
 }
 
-type VertexData struct {
+type Vertex struct {
 	X float32
 	Y float32
 	Z float32

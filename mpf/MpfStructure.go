@@ -208,7 +208,7 @@ type UVBlock struct {
 	UVCountPrefix byte
 	CountOfUVs    byte
 	UVCountSuffix byte
-	UVData        []UV // Size is CountOfUVs
+	UVs           []UV // Size is CountOfUVs
 
 	/*
 		Size is CountOfUVs * 8, then moduled by 16.
@@ -243,7 +243,7 @@ type NormalBlock struct {
 		Size is CountOfNormals * 6, then moduled by 16.
 		e.g.:
 			CountOfNormals = 58
-			TotalBytes = CountOfNormals * 8
+			TotalBytes = CountOfNormals * 6
 			FillerSize = TotalBytes % 16
 			FillerSize = 16 - FillerSize
 	*/

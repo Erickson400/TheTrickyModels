@@ -42,5 +42,5 @@ func main() {
 	}
 
 	// If all is gucci then procced.
-	ProcessMpfSystem(filepath.ToSlash(os.Args[1]), filepath.ToSlash(os.Args[2]))
+	MpfToJson(filepath.ToSlash(os.Args[1]), filepath.ToSlash(os.Args[2]))
 }

@@ -10,7 +10,8 @@ package main
 type TheFile struct {
 	Header          FileHeader
 	ModelHeaderList []ModelHeader // Size is Header.ModelCount
-	ModelDataList   []ModelData   // Size is Header.ModelCount
+	Filler1         [4]byte
+	ModelDataList   []ModelData // Size is Header.ModelCount
 }
 
 type FileHeader struct {

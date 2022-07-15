@@ -1,10 +1,13 @@
 package main
 
 /*
-	-> means holds
+	-> means holds.
 	Hirarchy: Mpf File -> Models -> Meshes -> TriStrips.
 
-	Model = ModelHeader + ModelData
+	Model = ModelHeader + ModelData.
+	i.e: ModelHeader 34 and ModelData 34 make up Model 34.
+	The word Model is just a concept, not an actual struct.
+
 */
 
 type TheFile struct {
@@ -77,62 +80,59 @@ type ModelHeader struct {
 	*/
 	OffsetOfMeshData uint32 // Relative to ModelStart.
 
-	Unknown2              uint32
-	OffsetOfBoneWeights2  uint32 // Relative to ModelStart
-	OffsetOfNumListRef    uint32 // Relative to ModelStart
-	OffsetOfBoneWeights3  uint32 // Relative to ModelStart
-	Unknown3              uint32
-	Unknown4              uint16
-	Unknown5              uint16 // Count?
-	Unknown6              uint16 // Bone Count?
-	CountOfBoneWeights    uint16 // Relative to ModelStart
-	CountOfInternalMeshes uint16
-	Unknown7              uint16
-	Unknown8              uint16
-	Unknown9              uint16
-	FillerPadding         uint32
+	Unknown2             uint32
+	OffsetOfBoneWeights2 uint32 // Relative to ModelStart
+	OffsetOfNumListRef   uint32 // Relative to ModelStart
+	OffsetOfBoneWeights3 uint32 // Relative to ModelStart
+	Unknown3             uint32
+	Unknown4             uint16
+	Unknown5             uint16 // Count?
+	Unknown6             uint16 // Bone Count?
+	CountOfBoneWeights   uint16 // Relative to ModelStart
+	MaterialCount        uint16
+	Unknown7             uint16
+	Unknown8             uint16
+	Unknown9             uint16
+	FillerPadding        uint32
 }
 
 type ModelData struct {
-	FirstName [4]byte
-	Unknown1  uint32 // stores 0x00202020
-	Unknown2  uint32 // stores 0x00202020
-	LastName  [4]byte
-	Unknown3  uint32 // stores 0x00202020
-	// ...Unknown Missing Data
+	MaterialList []Material // Size is ModelHeader.MaterialCount
+	// .. Missing bone data
+
+	MeshGroupList []MeshGroup // Unknown Size
 
 	/*
 		Starts at ModelHeader.ModelStart + Modelheader.OffsetOfMeshData
 	*/
-	Meshes []Mesh // Unknown amount of meshes
-	// ...Unknown Missing Data
+
+	Meshes []Mesh // Unknown Size
 
 	/*
-		01000060 00000000 00000000 00000000
-		00000000 01010001 00000000 00000000
-		or
-		00000000 00000000 00000000 01010001
 		00000000 00000010 00000000 00000014
 	*/
 	Footer [32]byte
-	// ...Unknown Missing Data
+}
+
+type Material struct {
+	Name       [4]byte
+	Parameters [16]byte
+	Unknown1   float32
+	Unknown2   [8]byte // 0x8180803B 0x8180803B
+}
+
+type MeshGroup struct {
+	Meshes []Mesh // Unknown Size
+}
+
+type RowHeader struct {
+	RowCount uint16
+	Type     uint16 // 0x10 or 0x60
+	Filler   [12]byte
 }
 
 type Mesh struct {
-	/*
-		TriStripCountRow + InfoRows
-	*/
-	CountOfTotalRows Uint24
-
-	/*
-		Always 10
-	*/
-	Unknown1 byte
-
-	/*
-		Filler/Padding
-	*/
-	Unknown2 [12]byte
+	RowHeader1 RowHeader
 
 	/*
 		Filler/Padding

@@ -48,33 +48,43 @@ func BytesToStruct(b []byte) (file TheFile) {
 
 	// File Header
 	Read(&file.Header)
-	Read(&file.Filler1)
 
 	// Model headers
 	file.ModelHeaderList = make([]ModelHeader, file.Header.ModelCount)
-	for i := 0; i < int(file.Header.ModelCount); i++ { //
-		Read(&file.ModelHeaderList[i])
-	}
+	Read(&file.ModelHeaderList)
+	Read(&file.Filler1)
 
 	// Model data
 	file.ModelDataList = make([]ModelData, file.Header.ModelCount)
-	for i := 0; i < int(file.Header.ModelCount); i++ {
+	for i := 0; i < len(file.ModelDataList); i++ {
 		model := &file.ModelDataList[i]
 
-		Read(&model.FirstName)
-		Read(&model.Unknown1)
-		Read(&model.Unknown2)
-		Read(&model.LastName)
-		Read(&model.Unknown3)
-
 		// Meshes
-		offset := file.Header.OffsetOfModelDataList
-		offset += file.ModelHeaderList[i].RelativeOffset
-		offset += file.ModelHeaderList[i].OffsetOfMeshData
-		buf.Seek(int64(offset), io.SeekStart)
+		/*
+			Look for the FirstMeshOffset on the ModelHeader, it points to the first RowCount Header.
+
+			RowCountHeaders take an entire row and looks like:
+				(rowCount)000010 00000000 00000000 00000000
+
+			rowCount is the amount of rows below the header.
+			Below the last row there will be next RowCountHeader.
+
+			RowCountHeader changes to :
+				(rowCount)000060 00000000 00000000 00000000
+			if its close to the model group ending
+
+		*/
+		firstMeshOffset := file.Header.OffsetOfModelDataList
+		firstMeshOffset += file.ModelHeaderList[i].RelativeOffset
+		firstMeshOffset += file.ModelHeaderList[i].OffsetOfMeshData
+		buf.Seek(int64(firstMeshOffset), io.SeekStart)
 		model.Meshes = make([]Mesh, 0, 5)
 
 		for {
+			/*
+				Loop till it reads the last mesh of the model
+			*/
+
 			// Mesh
 			model.Meshes = append(model.Meshes, Mesh{})
 			LastMesh := &model.Meshes[len(model.Meshes)-1]
@@ -144,6 +154,7 @@ func BytesToStruct(b []byte) (file TheFile) {
 			current, _ := buf.Seek(0, io.SeekCurrent)
 
 			// Model Footer
+			PrintLoc(buf)
 			Read(&model.Footer)
 
 			footer1 := [32]byte{
@@ -168,6 +179,7 @@ func BytesToStruct(b []byte) (file TheFile) {
 			if model.Footer == footer1 || model.Footer == footer2 {
 				break
 			}
+			break
 			buf.Seek(current, io.SeekStart) // Move backwards as if footer was never read
 		}
 

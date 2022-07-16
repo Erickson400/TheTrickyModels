@@ -34,12 +34,12 @@ type FileHeader struct {
 	/*
 		Points to the first ModelHeader (from TheFile.ModelHeaderList)
 	*/
-	OffsetOfModelHeaderList uint16
+	ModelHeaderListOffset uint16
 
 	/*
 		Points to the first ModelData (from TheFile.ModelDataList)
 	*/
-	OffsetOfModelDataList uint32
+	ModelDataListOffset uint32
 }
 
 type ModelHeader struct {
@@ -49,51 +49,48 @@ type ModelHeader struct {
 	Name [16]byte
 
 	/*
-		It points to the current model from TheFile.OffsetOfModelDataList.
-		Its relative to FileHeader.OffsetOfModelDataList.
+		It points to the current model from TheFile.ModelDataList
+		Its relative to FileHeader.ModelDataListOffset.
 
-		The decoder adds this to FileHeader.OffsetOfModelDataList.
+		The decoder adds this to FileHeader.ModelDataListOffset.
 		The sum is where the Model starts.
-		ModelStart is the alias for ModelRelativeOffset + FileHeader.OffsetOfModelDataList.
+
+		ModelStart is the alias for RelativeOffset + FileHeader.ModelDataListOffset.
 	*/
 	RelativeOffset uint32
 
 	/*
-		Size represented in bytes.
-		Tells how much data the model takes. Good for reading an entire model
-		 all based on the ModelHeader.
-		This is good because not all models are the same size.
+		Represented in bytes.
 	*/
 	Size uint32
 
 	/*
-		Not yet clear what this is.
-		Model data offset goes to some data above the tristrips.
+		Points to the first Bone in the list
 	*/
-	OffsetToDataAboveTristrips uint32 // Relative to ModelStart
+	BoneListOffset uint32 // Relative to ModelStart
 
-	OffsetOfBoneWeights1 uint32 // Relative to ModelStart
-	Unknown1             uint32
+	BoneWeightsOffset1 uint32 // Relative to ModelStart
+	Unknown1           uint32
 
 	/*
-		Points to first Mesh in the model's Mesh array
+		Points to first Mesh in the Mesh group list
 	*/
-	OffsetOfMeshData uint32 // Relative to ModelStart.
+	MeshDataOffset uint32 // Relative to ModelStart.
 
-	Unknown2             uint32
-	OffsetOfBoneWeights2 uint32 // Relative to ModelStart
-	OffsetOfNumListRef   uint32 // Relative to ModelStart
-	OffsetOfBoneWeights3 uint32 // Relative to ModelStart
-	Unknown3             uint32
-	Unknown4             uint16
-	Unknown5             uint16 // Count?
-	Unknown6             uint16 // Bone Count?
-	CountOfBoneWeights   uint16 // Relative to ModelStart
-	MaterialCount        uint16
-	Unknown7             uint16
-	Unknown8             uint16
-	Unknown9             uint16
-	FillerPadding        uint32
+	Unknown2           uint32
+	BoneWeightsOffset2 uint32 // Relative to ModelStart
+	NumListRefOffset   uint32 // Relative to ModelStart
+	BoneWeightsOffset3 uint32 // Relative to ModelStart
+	Unknown3           uint32
+	Unknown4           uint16
+	Unknown5           uint16 // Count?
+	Unknown6           uint16 // Bone Count?
+	BoneDataCount      uint16
+	MaterialCount      uint16
+	Unknown7           uint16
+	Unknown8           uint16
+	Unknown9           uint16
+	FillerPadding      uint32
 }
 
 type ModelData struct {
@@ -115,10 +112,12 @@ type ModelData struct {
 }
 
 type Material struct {
-	Name       [4]byte
-	Parameters [16]byte
-	Unknown1   float32
-	Unknown2   [8]byte // 0x8180803B 0x8180803B
+	MainTextureName [4]byte
+	TextureType1    [4]byte
+	TextureType2    [4]byte
+	TextureType3    [4]byte
+	TextureType4    [4]byte
+	Unknown1        [3]float32
 }
 
 type MeshGroup struct {

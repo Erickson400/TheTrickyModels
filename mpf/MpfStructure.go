@@ -95,20 +95,13 @@ type ModelHeader struct {
 
 type ModelData struct {
 	MaterialList []Material // Size is ModelHeader.MaterialCount
-	// .. Missing bone data
-
-	MeshGroupList []MeshGroup // Unknown Size
+	BoneList     []Bone     // Size is ModelHeader.BoneDataCount
+	Unknown1     []byte     // Size is ModelHeader.MeshDataOffset
 
 	/*
 		Starts at ModelHeader.ModelStart + Modelheader.OffsetOfMeshData
 	*/
-
-	Meshes []Mesh // Unknown Size
-
-	/*
-		00000000 00000010 00000000 00000014
-	*/
-	Footer [32]byte
+	MeshGroupList []MeshGroup // Unknown Size
 }
 
 type Material struct {
@@ -120,67 +113,147 @@ type Material struct {
 	Unknown1        [3]float32
 }
 
-type MeshGroup struct {
-	Meshes []Mesh // Unknown Size
+type Bone struct {
+	Name         [16]byte
+	Unknown1     uint16
+	ParentBoneID uint16
+	Unknown2     uint16
+	ID           uint16
+	X            float32
+	Y            float32
+	Z            float32
+	RotRadianX1  float32
+	RotRadianY1  float32
+	RotRadianZ1  float32
+	RotRadianX2  float32
+	RotRadianY2  float32
+	RotRadianZ2  float32
+
+	/*
+		Contains 6 float values with either -1.0 or 1.0
+	*/
+	Unknown3 [6]float32
 }
 
-type RowHeader struct {
-	RowCount uint16
-	Type     uint16 // 0x10 or 0x60
-	Filler   [12]byte
+type MeshGroup struct {
+	MeshList []Mesh // Unknown Size
+
+	// Notes
+	// at the end of mesh it can be x10 or x60
+	/*
+		x10 A 14 0 0 appears in between meshes in a group
+		x10 A 14 8 14 6 14 appears in between meshes in a group
+		x10 A 14 6 14 6 14 appears in between meshes in a group
+		x10 A 14 6 14 6 14 appears at the end of a model
+		x10 A 14 8 14 6 14 appears at the end of a model
+
+		x60 1101 appears in between meshes in a group
+		x60 00001101 appears in between meshes in a group
+
+		0000 10 0000 14 may be the group footer.
+		modelData dont have footers.
+
+
+
+				x60 always ends in:
+					00000000 01000010 00000000 00000000
+
+				x10 always ends in:
+					01010001 0A000014 00000000 00000000
+					or
+					01010001 0A000014 06000014 06000014
+						when its the end of the model.
+					or
+					01010001 0A000014 08000014 06000014
+					or
+					any row with 01010001
+
+
+
+			first model:
+				group list {
+					{mesh1 A 14 0 0,
+					 mesh2 A 14 6 14 6 14,
+					},
+					x60 holds 01010001 in 2nd 32byte
+					x60 holds 01010001 in 4th 32byte
+				}
+
+
+			second model:
+				group list {
+					{mesh1 A 14 0 0,
+					 mesh2 A 14 6 14 6 14,
+					 mesh3 A 14 8 14 6 14,
+					},
+					x60 holds 01010001 in 2nd 32byte
+					x60 holds 01010001 in 4th 32byte
+				}
+
+	*/
+
+	/*
+		Stores 00000000 00000010 00000000 00000014
+	*/
+	Footer [16]byte
 }
 
 type Mesh struct {
-	RowHeader1 RowHeader
+	TriStripRowHeader RowHeader
 
 	/*
-		Filler/Padding
+		Filler/Padding/Footer
 	*/
-	Unknown3 [13]byte
+	Filler [13]byte
 
 	/*
 		Always 0x80
 	*/
-	PrefixCount byte
+	CountPrefix byte
 
 	/*
-		Stores an amount of rows:
-		InfoRows + TriStripRows
+		Stores an amount of rows: InfoRows + TriStripRows.
+
+		The first row from the count is below this row.
 	*/
-	SumOfRows byte
+	StripRowCount byte
 
 	/*
 		Always 0x6C
 	*/
-	SuffixOfRows byte
-	InfoRows     [2]Row
+	CountSuffix byte
+	InfoRows    [2]Row
 
 	/*
-		Stores each tristrip's length
+		Stores each strip's length
 	*/
-	TriStripRows []StripRow // Size is SumOfRows - 2
+	StripRowList []StripRow // Size is TriStripDataRowCount - 2
 
-	/*
-		Might be a vert count
-	*/
-	Unknown4 Uint24
-
-	/*
-		Always 10
-	*/
-	Unknown5       byte
-	Unknown6       [12]byte
+	BlockRowHeader RowHeader
 	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000
 	UvBlock        UVBlock
 	ElementHeader2 [16]byte // Stores 00000000 00000030 00000000 00000000
 	NormBlock      NormalBlock
 	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
 	VertBlock      VertexBlock
+}
+
+type RowHeader struct {
 	/*
-		Stores 01000010 00000000 00000000 00000000 01010001 0A000014
+		RowHeader stores the amount of rows below the RowHeader.
+		It can tell us the section's amount of data in advance.
+		e.g:
+			The Mesh.BlockRowHeader is how many rows the Mesh's UVBlock, NormalBlock, UVBlock
+			and element headers take up.
 	*/
-	Footer   [24]byte
-	Unknown7 [8]byte
+	RowCount uint16
+
+	/*
+		0x10 = holds tristrip row counts, or block data
+		0x60 = holds a mesh and model footer, and maybe even some unknown data.
+	*/
+	Type   uint16 // 0x10 or 0x60
+	Filler [12]byte
 }
 
 type Row struct {
@@ -188,13 +261,8 @@ type Row struct {
 }
 
 type StripRow struct {
-	CountOfVertices uint32
-	Padding         [12]byte
-}
-
-type TriStripCountRow struct {
-	TriStripLength uint32
-	Padding        [12]byte
+	VerticesCount uint32
+	Padding       [12]byte
 }
 
 type UVBlock struct {
@@ -203,15 +271,17 @@ type UVBlock struct {
 		Stores 00100000 00100000 00000020 50505050 (aka PPPP)
 	*/
 	Header        [16]byte
-	Unknown1      [12]byte
-	Unknown2      byte
+	Unknown1      [13]byte
 	UVCountPrefix byte
-	CountOfUVs    byte
+	UVCount       byte
 	UVCountSuffix byte
-	UVs           []UV // Size is CountOfUVs
+	UVList        []UV // Size is UVCount
 
 	/*
 		Size is CountOfUVs * 8, then moduled by 16.
+		This is so that the UVs always take up a row. If it doesnt fill the whole row
+		then the remaining bytes will be set to 0s.
+
 		e.g.:
 			CountOfUVs = 58
 			TotalBytes = CountOfUVs * 8
@@ -241,6 +311,8 @@ type NormalBlock struct {
 	Normals           []Normal // Size is CountOfNormals
 	/*
 		Size is CountOfNormals * 6, then moduled by 16.
+		This is so that the Normalss always take up a row. If it doesnt fill the whole row
+		then the remaining bytes will be set to 0s.
 		e.g.:
 			CountOfNormals = 58
 			TotalBytes = CountOfNormals * 6
@@ -271,6 +343,8 @@ type VertexBlock struct {
 
 	/*
 		Size is CountOfVertices * 12, then moduled by 16.
+		This is so that the Vertices always take up a row. If it doesnt fill the whole row
+		then the remaining bytes will be set to 0s.
 		e.g.:
 			CountOfVertices = 58
 			TotalBytes = CountOfVertices * 12

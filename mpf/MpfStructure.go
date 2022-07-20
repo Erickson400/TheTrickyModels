@@ -84,7 +84,7 @@ type ModelHeader struct {
 	Unknown3           uint32
 	Unknown4           uint16
 	Unknown5           uint16 // Count?
-	Unknown6           uint16 // Bone Count?
+	GroupCount         uint16
 	BoneDataCount      uint16
 	MaterialCount      uint16
 	Unknown7           uint16
@@ -138,59 +138,7 @@ type Bone struct {
 type MeshGroup struct {
 	MeshList []Mesh // Unknown Size
 
-	// Notes
-	// at the end of mesh it can be x10 or x60
-	/*
-		x10 A 14 0 0 appears in between meshes in a group
-		x10 A 14 8 14 6 14 appears in between meshes in a group
-		x10 A 14 6 14 6 14 appears in between meshes in a group
-		x10 A 14 6 14 6 14 appears at the end of a model
-		x10 A 14 8 14 6 14 appears at the end of a model
-
-		x60 1101 appears in between meshes in a group
-		x60 00001101 appears in between meshes in a group
-
-		0000 10 0000 14 may be the group footer.
-		modelData dont have footers.
-
-
-
-				x60 always ends in:
-					00000000 01000010 00000000 00000000
-
-				x10 always ends in:
-					01010001 0A000014 00000000 00000000
-					or
-					01010001 0A000014 06000014 06000014
-						when its the end of the model.
-					or
-					01010001 0A000014 08000014 06000014
-					or
-					any row with 01010001
-
-
-
-			first model:
-				group list {
-					{mesh1 A 14 0 0,
-					 mesh2 A 14 6 14 6 14,
-					},
-					x60 holds 01010001 in 2nd 32byte
-					x60 holds 01010001 in 4th 32byte
-				}
-
-
-			second model:
-				group list {
-					{mesh1 A 14 0 0,
-					 mesh2 A 14 6 14 6 14,
-					 mesh3 A 14 8 14 6 14,
-					},
-					x60 holds 01010001 in 2nd 32byte
-					x60 holds 01010001 in 4th 32byte
-				}
-
-	*/
+	//
 
 	/*
 		Stores 00000000 00000010 00000000 00000014
@@ -227,7 +175,7 @@ type Mesh struct {
 	/*
 		Stores each strip's length
 	*/
-	StripRowList []StripRow // Size is TriStripDataRowCount - 2
+	StripRowList []StripRow // Size is StripRowCount
 
 	BlockRowHeader RowHeader
 	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000

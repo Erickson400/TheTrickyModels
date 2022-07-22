@@ -347,8 +347,8 @@ type VertexBlock struct {
 		This is so that the Vertices always take up a row. If it doesnt fill the whole row
 		then the remaining bytes will be set to 0s.
 		e.g.:
-			CountOfVertices = 58
-			TotalBytes = CountOfVertices * 12
+			VertexCount = 58
+			TotalBytes = VertexCount * 12
 			FillerSize = TotalBytes % 16
 			FillerSize = 16 - FillerSize
 	*/

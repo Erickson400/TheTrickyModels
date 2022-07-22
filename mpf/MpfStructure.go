@@ -69,28 +69,32 @@ type ModelHeader struct {
 	*/
 	BoneListOffset uint32 // Relative to ModelStart
 
-	BoneWeightsOffset1 uint32 // Relative to ModelStart
-	Unknown1           uint32
+	IKPointListOffset uint32 // Relative to ModelStart
+	GroupOffset       uint32
 
 	/*
 		Points to first Mesh in the Mesh group list
 	*/
 	MeshDataOffset uint32 // Relative to ModelStart.
 
-	Unknown2           uint32
-	BoneWeightsOffset2 uint32 // Relative to ModelStart
-	NumListRefOffset   uint32 // Relative to ModelStart
-	BoneWeightsOffset3 uint32 // Relative to ModelStart
-	Unknown3           uint32
-	Unknown4           uint16
-	Unknown5           uint16 // Count?
-	GroupCount         uint16
-	BoneDataCount      uint16
-	MaterialCount      uint16
-	Unknown7           uint16
-	Unknown8           uint16
-	Unknown9           uint16
-	FillerPadding      uint32
+	MaterialDataOffset  uint32
+	SkinningDataOffset1 uint32 // Relative to ModelStart
+	NumListRefOffset    uint32 // Relative to ModelStart
+	SkinningDataOffset2 uint32 // Relative to ModelStart
+	Filler1             uint32
+	Filler2             uint16
+	SkinningDataCount   uint16
+	GroupCount          uint16
+	BoneDataCount       uint16
+	MaterialCount       uint16
+	IKPointCount        uint16
+
+	/*
+		If 0 then it's not a face
+	*/
+	MorphCount uint16
+	Unknown1   uint16
+	Filler     uint32
 }
 
 type ModelData struct {
@@ -101,7 +105,7 @@ type ModelData struct {
 	/*
 		Starts at ModelHeader.ModelStart + Modelheader.OffsetOfMeshData
 	*/
-	MeshGroupList []MeshGroup // Unknown Size
+	MeshGroupList []MeshGroup // Size is Modelheader.GroupCount
 }
 
 type Material struct {
@@ -136,9 +140,13 @@ type Bone struct {
 }
 
 type MeshGroup struct {
-	MeshList []Mesh // Unknown Size
 
-	//
+	/*
+		To tell if a group finished, it will have a group Footer below it.
+		If the model name has "Shdw", or "shdw"  then dont read the Uvs and Normal blocks,
+		leave them empty.
+	*/
+	MeshList []Mesh // Unknown Size
 
 	/*
 		Stores 00000000 00000010 00000000 00000014
@@ -184,6 +192,7 @@ type Mesh struct {
 	NormBlock      NormalBlock
 	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
 	VertBlock      VertexBlock
+	MorphData      []byte // Unknown Size
 }
 
 type RowHeader struct {
@@ -254,9 +263,9 @@ type NormalBlock struct {
 	Unknown1          [12]byte
 	Unknown2          byte
 	NormalCountPrefix byte
-	CountOfNormals    byte
+	NormalCount       byte
 	NormalCountSuffix byte
-	Normals           []Normal // Size is CountOfNormals
+	Normals           []Normal // Size is NormalCount
 	/*
 		Size is CountOfNormals * 6, then moduled by 16.
 		This is so that the Normalss always take up a row. If it doesnt fill the whole row

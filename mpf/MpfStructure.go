@@ -140,13 +140,20 @@ type Bone struct {
 }
 
 type MeshGroup struct {
-
 	/*
 		To tell if a group finished, it will have a group Footer below it.
-		If the model name has "Shdw", or "shdw"  then dont read the Uvs and Normal blocks,
-		leave them empty.
+	*/
+
+	/*
+		Default Meshes.
+		MeshShadowList is left empty.
 	*/
 	MeshList []Mesh // Unknown Size
+	/*
+		If the model name has "Shdw", or "shdw"  Read as MeshShadowList.
+		and leave MeshList empty.
+	*/
+	MeshShadowList []MeshShadow // Unknown Size
 
 	/*
 		Stores 00000000 00000010 00000000 00000014
@@ -191,6 +198,43 @@ type Mesh struct {
 	ElementHeader2 [16]byte // Stores 00000000 00000030 00000000 00000000
 	NormBlock      NormalBlock
 	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
+	VertBlock      VertexBlock
+	MorphData      []byte // Unknown Size
+}
+
+type MeshShadow struct {
+	TriStripRowHeader RowHeader
+
+	/*
+		Filler/Padding/Footer
+	*/
+	Filler [13]byte
+
+	/*
+		Always 0x80
+	*/
+	CountPrefix byte
+
+	/*
+		Stores an amount of rows: InfoRows + TriStripRows.
+
+		The first row from the count is below this row.
+	*/
+	StripRowCount byte
+
+	/*
+		Always 0x6C
+	*/
+	CountSuffix byte
+	InfoRows    [2]Row
+
+	/*
+		Stores each strip's length
+	*/
+	StripRowList []StripRow // Size is StripRowCount
+
+	BlockRowHeader RowHeader
+	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000
 	VertBlock      VertexBlock
 	MorphData      []byte // Unknown Size
 }
@@ -294,7 +338,7 @@ type VertexBlock struct {
 	Unknown1          [12]byte
 	Unknown2          byte
 	VertexCountPrefix byte
-	CountOfVertices   byte
+	VertexCount       byte
 	VertexCountSuffix byte
 	Vertices          []Vertex // Size of CountOfVertices
 

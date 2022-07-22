@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 )
 
 func FindPattern(data []byte, tolerance int, pattern []byte) (position int, err error) {
@@ -26,4 +28,9 @@ func FindPattern(data []byte, tolerance int, pattern []byte) (position int, err 
 		}
 	}
 	return 0, fmt.Errorf("could not find pattern")
+}
+
+func PrintLoc(buf *bytes.Reader) {
+	m, _ := buf.Seek(0, os.SEEK_CUR)
+	fmt.Println(m)
 }

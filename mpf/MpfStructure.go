@@ -145,15 +145,17 @@ type MeshGroup struct {
 	*/
 
 	/*
-		Default Meshes.
-		MeshShadowList is left empty.
+		Only one of these Mesh lists should have data, all the others should be empty.
+
+		MeshFaceList - If model name contains "Face"/"face".
+		MeshShadowList - If model name contains "Shdw"/"shdw".
+		MeshDefaultList - Default if non of the above apply.
 	*/
-	MeshList []Mesh // Unknown Size
-	/*
-		If the model name has "Shdw", or "shdw"  Read as MeshShadowList.
-		and leave MeshList empty.
-	*/
-	MeshShadowList []MeshShadow // Unknown Size
+	MeshFaceList    []FaceMesh    // Unknown Size
+	MeshShadowList  []ShadowMesh  // Unknown Size
+	MeshDefaultList []DefaultMesh // Unknown Size
+
+	Unknown1 [4]Row
 
 	/*
 		Stores 00000000 00000010 00000000 00000014
@@ -161,7 +163,7 @@ type MeshGroup struct {
 	Footer [16]byte
 }
 
-type Mesh struct {
+type FaceMesh struct {
 	TriStripRowHeader RowHeader
 
 	/*
@@ -199,10 +201,13 @@ type Mesh struct {
 	NormBlock      NormalBlock
 	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
 	VertBlock      VertexBlock
-	MorphData      []byte // Unknown Size
+
+	Unknown1  RowHeader
+	Unknown2  Row
+	MorphList []Morph // Size is Header.MorphCount
 }
 
-type MeshShadow struct {
+type ShadowMesh struct {
 	TriStripRowHeader RowHeader
 
 	/*
@@ -236,7 +241,55 @@ type MeshShadow struct {
 	BlockRowHeader RowHeader
 	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000
 	VertBlock      VertexBlock
-	MorphData      []byte // Unknown Size
+	Unknown1       RowHeader
+	Unknown2       Row
+}
+
+type DefaultMesh struct {
+	TriStripRowHeader RowHeader
+
+	/*
+		Filler/Padding/Footer
+	*/
+	Filler [13]byte
+
+	/*
+		Always 0x80
+	*/
+	CountPrefix byte
+
+	/*
+		Stores an amount of rows: InfoRows + TriStripRows.
+
+		The first row from the count is below this row.
+	*/
+	StripRowCount byte
+
+	/*
+		Always 0x6C
+	*/
+	CountSuffix byte
+	InfoRows    [2]Row
+
+	/*
+		Stores each strip's length
+	*/
+	StripRowList []StripRow // Size is StripRowCount
+
+	BlockRowHeader RowHeader
+	ElementHeader1 [16]byte // Stores 00000000 00000030 00000000 00000000
+	UvBlock        UVBlock
+	ElementHeader2 [16]byte // Stores 00000000 00000030 00000000 00000000
+	NormBlock      NormalBlock
+	ElementHeader3 [16]byte // Stores 00000000 00000030 00000000 00000000
+	VertBlock      VertexBlock
+	Unknown1       RowHeader
+	Unknown2       Row
+}
+
+type Morph struct {
+	MorphHeader RowHeader
+	R           []Row // Size is MorphHeader.RowCount
 }
 
 type RowHeader struct {

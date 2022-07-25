@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"reflect"
 	"strings"
 )
 
@@ -48,19 +47,27 @@ func BytesToStruct(b []byte) (file TheFile) {
 	// Start Reading TheFile
 
 	// File Header
+	fmt.Println("Reading File Header...")
 	Read(&file.Header)
+	fmt.Println("SUCCESS: Reading File Header")
 
 	// Model headers
+	fmt.Println("Reading Model Headers...")
 	file.ModelHeaderList = make([]ModelHeader, file.Header.ModelCount)
 	Read(&file.ModelHeaderList)
 	Read(&file.Filler1)
+	fmt.Println("SUCCESS: Reading Model Headers")
 
 	// Model data
 	file.ModelDataList = make([]ModelData, file.Header.ModelCount)
 	for i := 0; i < len(file.ModelDataList); i++ {
 		header := file.ModelHeaderList[i]
 		model := &file.ModelDataList[i]
+		modelStart := file.Header.ModelDataListOffset + header.RelativeOffset
 
+		fmt.Println("Reading Model '" + string(header.Name[:]) + "' Data...")
+
+		fmt.Println("Reading Model '" + string(header.Name[:]) + "' Materials, Bones, Unk1...")
 		// Materials
 		model.MaterialList = make([]Material, header.MaterialCount)
 		Read(&model.MaterialList)
@@ -69,24 +76,35 @@ func BytesToStruct(b []byte) (file TheFile) {
 		model.BoneList = make([]Bone, header.BoneDataCount)
 		Read(&model.BoneList)
 
+		// IK Points
+		model.IKPointList = make([]IK, header.IKPointCount)
+		Read(&model.IKPointList)
+
 		// Unknown1
-		model.Unknown1 = make([]byte, header.MeshDataOffset)
+		loc, _ := buf.Seek(0, io.SeekCurrent)
+		model.Unknown1 = make([]byte, int64(modelStart+header.MeshDataOffset)-loc)
 		Read(&model.Unknown1)
+		fmt.Println("SUCCESS: Reading Model '" + string(header.Name[:]) + "' Materials, Bones, Unk1")
 
 		// Mesh Groups
+		fmt.Println("Reading Mesh Groups...")
+		fmt.Println(header.GroupOffsetData + modelStart)
+
 		model.MeshGroupList = make([]MeshGroup, header.GroupCount)
 		for j := 0; j < len(model.MeshGroupList); j++ {
+			fmt.Println("Reading Mesh Groups")
 			group := &model.MeshGroupList[j]
 			ReadGroup(Read, buf, header, model, group)
 			Read(&group.Unknown1)
 			Read(&group.Footer)
+
 		}
 	}
-
 	return
 }
 
 func ReadGroup(Read func(p any), buf *bytes.Reader, header ModelHeader, model *ModelData, group *MeshGroup) {
+
 	// Check if its a Face model
 	if strings.Contains(string(header.Name[:]), "Face") || strings.Contains(string(header.Name[:]), "face") {
 		group.MeshFaceList = make([]FaceMesh, 0, 1)
@@ -117,10 +135,15 @@ func ReadGroup(Read func(p any), buf *bytes.Reader, header ModelHeader, model *M
 
 	group.MeshDefaultList = make([]DefaultMesh, 0, 1)
 	for {
+		fmt.Println("-----Sus")
 		group.MeshDefaultList = append(group.MeshDefaultList, DefaultMesh{})
 		mesh := &group.MeshDefaultList[len(group.MeshDefaultList)-1]
 		ReadMeshDefault(Read, buf, mesh)
+		//PrintLoc(buf)
+
 		if CheckForFooter(Read, buf) {
+			fmt.Println("AAAAAAAAAAHHHHHHHHHH")
+
 			return
 		}
 	}
@@ -160,6 +183,7 @@ func ReadMeshDefault(Read func(p any), buf *bytes.Reader, mesh *DefaultMesh) {
 	Read(&mesh.StripRowCount)
 	Read(&mesh.CountSuffix)
 	Read(&mesh.InfoRows)
+
 	mesh.StripRowList = make([]StripRow, mesh.StripRowCount)
 	Read(&mesh.StripRowList)
 	Read(&mesh.BlockRowHeader)
@@ -228,13 +252,18 @@ func ReadNormalBlock(Read func(p any), block *NormalBlock) {
 }
 
 func CheckForFooter(Read func(p any), buf *bytes.Reader) bool {
-	r := [4]uint32{}
+	r := [4]uint32{0, 0, 0, 0}
 	groupFooter := [4]uint32{0x00000000, 0x00000010, 0x00000000, 0x00000014}
 
-	Read(&r)
-	if reflect.DeepEqual(r, groupFooter) {
-		buf.Seek(-16, io.SeekCurrent)
-		return true
+	buf.Seek(int64(-4), io.SeekCurrent)
+	i := 0
+	for i < 5 {
+		Read(&r)
+		if r == groupFooter {
+			return true
+		}
+		i++
 	}
+	buf.Seek(int64(-16*i), io.SeekCurrent)
 	return false
 }

@@ -1,42 +1,66 @@
 package main
 
-type FileHeader struct {
-	Unknown         uint32 // Always stores 4
-	ModelCount      uint16
-	ModelListOffset uint16 // Points to first ModelHeader
-	ModelRootOffset uint32
-
-	/*
-		ModelHeaders is not part of the file header, but we put it here
-		so that we know it starts right after it.
-	*/
-	ModelHeaders []ModelHeader // size is ModelCount
+type TheFile struct {
+	Header          FileHeader
+	ModelHeaderList []ModelHeader // Size is Header.ModelCount
+	ModelDataList   []ModelData   // Size is Header.ModelCount
 }
 
-type ModelHeader struct {
-	ModelName [16]byte
+type FileHeader struct { // Size is 12
+	Version               uint32 // Always stores 4
+	ModelCount            uint16
+	ModelHeaderListOffset uint16 // Points to first ModelHeader
+	ModelDataListOffset   uint32
+}
+
+type ModelHeader struct { // Size is 396
+	Name [16]byte
 
 	/*
-		The decoder adds this to FileHeader.ModelRootOffset.
+		It points to the current model from TheFile.ModelDataList.
+		Its relative to TheFile.Header.ModelDataListOffset.
+
+		The decoder adds this to TheFile.Header.ModelDataListOffset.
 		The sum is where the Model starts.
-		ModelStart is the alias for ModelRelativeOffset + FileHeader.ModelRootOffset.
+
+		ModelStart is the alias for RelativeOffset + TheFile.Header.ModelDataListOffset.
 	*/
-	ModelRelativeOffset  uint32
-	ModelSize            uint32
-	OffsetOfBoneData1    uint32 // Relative to ModelStart
-	OffsetOfBoneData2    uint32 // Relative to ModelStart
-	Unknown1             uint32
-	OffsetOfBoneData3    uint32 // Relative to ModelStart
-	Unknown2             uint32
-	OffsetOfModelData1   uint32 // Relative to ModelStart
-	OffsetOfModelData2   uint32 // Relative to ModelStart
-	OffsetOfTristripData uint32 // Relative to ModelStart
-	Unknown3             uint32
-	OffsetOfVertexData   uint32 // Relative to ModelStart
-	Unknown4             uint32
-	Unknown5             [332]byte
+	RelativeOffset            uint32
+	Size                      uint32
+	BoneDataOffset1           uint32 // Relative to ModelStart
+	BoneDataOffset2           uint32 // Relative to ModelStart
+	materialDataOffset        uint32 // Relative to ModelStart
+	BoneDataOffset3           uint32 // Relative to ModelStart
+	IKDataOffset              uint32 // Relative to ModelStart
+	SkinningHeaderListOffset1 uint32 // Relative to ModelStart
+	SkinningHeaderListOffset2 uint32 // Relative to ModelStart
+	TristripHeaderListOffset  uint32 // Relative to ModelStart
+	Unknown1                  uint32
+	VertexDataOffset          uint32 // Relative to ModelStart
+	Unknown2                  uint32
+	Unknown3                  [302]byte
+	BoneDataCount             uint16
+	Unknown4                  uint16
+	MaterialCount             uint16
+	IKDataCount               uint16
+	SkinningHeaderCount       uint16
+	TriStripGroupCount        uint16
+	Unknown5                  uint16
+	VertexCount               uint16
+	Unknown6                  uint16
+	Unknown7                  uint16
+	Unknown8                  uint16
 }
 
+type ModelData struct {
+	MaterialList       []Material       // Size is ModelHeader.MaterialCount
+	BoneData           []Bone           // Size is ModelHeader.BoneDataCount
+	IKData             []IK             // Size is ModelHeader.IKDataCount
+	SkinningHeaderList []SkinningHeader // Size is ModelHeader.SkinningHeaderCount
+
+}
+
+// --------------
 type TristripData struct {
 	OffsetOfTriangleIndicies uint32 // Relative to ModelStart
 	TriCount                 uint32

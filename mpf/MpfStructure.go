@@ -70,7 +70,7 @@ type ModelHeader struct {
 	BoneListOffset uint32 // Relative to ModelStart
 
 	IKPointListOffset uint32 // Relative to ModelStart
-	GroupOffset       uint32
+	GroupOffsetData   uint32
 
 	/*
 		Points to first Mesh in the Mesh group list
@@ -100,10 +100,11 @@ type ModelHeader struct {
 type ModelData struct {
 	MaterialList []Material // Size is ModelHeader.MaterialCount
 	BoneList     []Bone     // Size is ModelHeader.BoneDataCount
-	Unknown1     []byte     // Size is ModelHeader.MeshDataOffset
+	IKPointList  []IK       // Size is ModelHeader.IKPointCount
+	Unknown1     []byte     // Size is Modelheader.MeshDataOffset - Current Locations
 
 	/*
-		Starts at ModelHeader.ModelStart + Modelheader.OffsetOfMeshData
+		Starts at ModelHeader.ModelStart + Modelheader.MeshDataOffset
 	*/
 	MeshGroupList []MeshGroup // Size is Modelheader.GroupCount
 }
@@ -137,6 +138,13 @@ type Bone struct {
 		Contains 6 float values with either -1.0 or 1.0
 	*/
 	Unknown3 [6]float32
+}
+
+type IK struct {
+	X      float32
+	Y      float32
+	Z      float32
+	Filler uint32
 }
 
 type MeshGroup struct {

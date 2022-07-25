@@ -1,558 +1,200 @@
-{
-  "Header": {
-    "Version": 8,
-    "ModelCount": 10,
-    "ModelHeaderListOffset": 12,
-    "ModelDataListOffset": 816
-  },
-  "ModelHeaderList": [
-    {
-      "Name": [
-        65,
-        108,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 0,
-      "Size": 3776,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        65,
-        108,
-        71,
-        111,
-        111,
-        102,
-        121,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 3776,
-      "Size": 3776,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        66,
-        120,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 7552,
-      "Size": 4656,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        66,
-        120,
-        71,
-        111,
-        111,
-        102,
-        121,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 12208,
-      "Size": 4656,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        70,
-        114,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 16864,
-      "Size": 4528,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        70,
-        114,
-        71,
-        111,
-        111,
-        102,
-        121,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 21392,
-      "Size": 4528,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        115,
-        104,
-        100,
-        119,
-        65,
-        108,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 25920,
-      "Size": 2304,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        115,
-        104,
-        100,
-        119,
-        65,
-        76,
-        71,
-        111,
-        111,
-        102,
-        121,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 28224,
-      "Size": 2304,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        115,
-        104,
-        100,
-        119,
-        66,
-        120,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 30528,
-      "Size": 2704,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    },
-    {
-      "Name": [
-        115,
-        104,
-        100,
-        119,
-        70,
-        114,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      "RelativeOffset": 33232,
-      "Size": 2608,
-      "BoneListOffset": 32,
-      "IKPointListOffset": 116,
-      "GroupOffset": 176,
-      "MeshDataOffset": 224,
-      "MaterialDataOffset": 0,
-      "SkinningDataOffset1": 164,
-      "NumListRefOffset": 148,
-      "SkinningDataOffset2": 0,
-      "Filler1": 0,
-      "Filler2": 1,
-      "SkinningDataCount": 1,
-      "GroupCount": 1,
-      "BoneDataCount": 1,
-      "MaterialCount": 1,
-      "IKPointCount": 2,
-      "MorphCount": 0,
-      "Unknown1": 1,
-      "Filler": 0
-    }
-  ],
-  "Filler1": [
-    0,
-    0,
-    0,
-    0
-  ],
-  "ModelDataList": [
-    {
-      "MaterialList": [
-        {
-          "MainTextureName": [
-            98,
-            111,
-            114,
-            100
-          ],
-          "TextureType1": [
-            0,
-            32,
-            32,
-            32
-          ],
-          "TextureType2": [
-            0,
-            32,
-            32,
-            32
-          ],
-          "TextureType3": [
-            98,
-            100,
-            95,
-            103
-          ],
-          "TextureType4": [
-            0,
-            32,
-            32,
-            32
-          ],
-          "Unknown1": [
-            0.49803922,
-            0.003921569,
-            0.003921569
-          ]
-        }
-      ],
-      "BoneList": [
-        {
-          "Name": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          "Unknown1": 0,
-          "ParentBoneID": 0,
-          "Unknown2": 0,
-          "ID": 0,
-          "X": 0,
-          "Y": 0,
-          "Z": 0,
-          "RotRadianX1": 0,
-          "RotRadianY1": 0,
-          "RotRadianZ1": 0,
-          "RotRadianX2": 0,
-          "RotRadianY2": 0,
-          "RotRadianZ2": 0,
-          "Unknown3": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        }
-      ],
-      "Unknown1": "Ym9hcmQAAAAAAAAAAAAAAP////8DAAAAAAAAAAAAAAAAAAAA2w/JvwAAAAAAAAAAAAAAAAAAAADbD0lAAACAPwAAgL8AAIC/AACAPwAAgL8AAIA/Dm1VQV2PIkGldvvAAAAAANQBFcJdjyJBchHQwAAAAAABAAAAoAAAACQAAABkAAABAQAAAKwAAAAAAAAAAQAAAAAAAAD/////AQAAAMQAAADMAAAAAQAAAOAAAAD//////////wAAACAH8ec/CAAAEAAAAAAAAAAAAAAAAAAAAAABAQABAAAAAACAB2w=",
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    },
-    {
-      "MaterialList": null,
-      "BoneList": null,
-      "Unknown1": null,
-      "MeshGroupList": null
-    }
-  ]
-}
+[
+  16777473 0 0 1610612737
+]
+[
+  0 0 0 0
+]
+[
+  0 0 16777473 0
+]
+[
+  268435456 0 335544320 1685221218
+]
+[
+  538976256 538976256 1734304866 538976256
+]
+[
+  1056898815 998277249 998277249 1918988130
+]
+[
+  100 0 0 4294967295
+]
+[
+  3 0 0 0
+]
+Sus111
+[
+  16777473 0 1812430848 32823
+]
+[
+  808337408 1042 0 5
+]
+[
+  14 114 55 9
+]
+[
+  0 0 0 4
+]
+[
+  0 0 0 9
+]
+[
+  0 0 0 13
+]
+[
+  0 0 0 20
+]
+[
+  0 0 0 268435556
+]
+Sus111
+[
+  0 1078530011 1065353216 3212836864
+]
+[
+  3212836864 1065353216 3212836864 1065353216
+]
+[
+  1104077914 1092853842 3240099866 0
+]
+[
+  3252080346 1093282506 3240099866 0
+]
+[
+  1 160 36 16777316
+]
+[
+  1 172 0 1
+]
+[
+  0 4294967295 1 196
+]
+[
+  204 1 224 4294967295
+]
+Sus111
+[
+  2199649565 1114616 32604165 2147155994
+]
+[
+  11659806 4183784987 2144468732 4282574722
+]
+[
+  32160 0 0 0
+]
+[
+  805306368 0 0 0
+]
+[
+  1065353216 536870912 1077952576 0
+]
+[
+  16777475 0 2017034251 3266661388
+]
+[
+  3249635178 1075189896 3265585663 3250943789
+]
+[
+  3217830656 3265585663 3250943789 1064403840
+]
+Sus111
+[
+  32768 536870912 1077952576 0
+]
+[
+  16777475 0 2031517700 4276165290
+]
+[
+  372210990 2114846720 4277930446 372211613
+]
+[
+  2114846720 1179144 372211707 2114846720
+]
+[
+  4293524946 372211706 2114846720 17041870
+]
+[
+  372211613 2114846720 18815658 372210990
+]
+[
+  2114846720 4245299919 372210466 2114846720
+]
+[
+  4288685025 372210396 2114846720 8501
+]
+Sus111
+[
+  805306368 0 0 0
+]
+[
+  32768 536870912 1077952576 0
+]
+[
+  16777475 0 2032631813 102643112
+]
+[
+  595495925 2231894001 104609536 595496088
+]
+[
+  2231894001 4292687426 595495955 2231894001
+]
+[
+  4187174640 595496083 2231894001 4190057880
+]
+[
+  595495920 2231894001 4263914316 595494801
+]
+[
+  2231894001 6361076 595493121 2231894001
+]
+Sus111
+[
+  3247716769 3198070096 14 3232298137
+]
+[
+  3247956566 1073588669 14 3232298137
+]
+[
+  3247956566 3205404130 14 3258602021
+]
+[
+  3248196362 1071516201 14 3258602021
+]
+[
+  3248196362 3209549084 14 3266298589
+]
+[
+  3248436159 1069443732 14 3266298589
+]
+[
+  3248436159 3213265452 14 3271634515
+]
+[
+  3248675954 1067371262 14 3271634515
+]
+Sus111
+[
+  3250067557 1069739688 14 3260900154
+]
+[
+  1102597555 1069739688 14 3266093550
+]
+[
+  1012232272 1064403840 14 3265598128
+]
+[
+  1103460166 1064403840 14 3266663313
+]
+[
+  1102351516 1076504321 14 3266663313
+]
+[
+  1102351516 1076504321 14 3267545733
+]
+[
+  1099248192 1081154135 14 3266093550
+]
+[
+  1012232272 1064403840 14 3268030759
+]
+Sus111

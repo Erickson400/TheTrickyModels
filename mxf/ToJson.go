@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -54,49 +55,36 @@ func FileToStruct(f *os.File) (file TheFile) {
 	Read(&file.ModelHeaderList)
 	fmt.Println("SUCCESS: Reading Model Headers")
 
-	fmt.Println(file.Header.ModelDataListOffset + file.ModelHeaderList[0].Unknown2)
-
 	// Model data
-	fmt.Println("Reading Model Data...")
+	fmt.Println("\nReading Model Data...")
 	file.ModelDataList = make([]ModelData, file.Header.ModelCount)
 	for i := 0; i < len(file.ModelDataList); i++ {
 		header := file.ModelHeaderList[i]
 		model := &file.ModelDataList[i]
-		//modelStart := file.Header.ModelDataListOffset + header.RelativeOffset
+		modelStart := file.Header.ModelDataListOffset + header.RelativeOffset
 		fmt.Println("Reading Model '" + string(header.Name[:]) + "' Data...")
 
 		// Materials
 		model.MaterialList = make([]Material, header.MaterialCount)
+		f.Seek(int64(modelStart+header.MaterialDataOffset), io.SeekStart)
 		Read(&model.MaterialList)
 
 		// Bones
 		model.BoneList = make([]Bone, header.BoneDataCount)
+		f.Seek(int64(modelStart+header.BoneDataOffset1), io.SeekStart)
 		Read(&model.BoneList)
 
 		// IK Points
-
-		//fmt.Println(modelStart + header.MorphHeaderListOffset)
-		//PrintLoc(f)
 		model.IKList = make([]IK, header.IKDataCount)
+		f.Seek(int64(modelStart+header.IKDataOffset), io.SeekStart)
 		Read(&model.IKList)
-
-		//fmt.Println(model.IKList)
-		// fmt.Println(header.MorphHeaderCount)
-
-		// Filler
-		var preStripOffset uint32
-		if header.IKDataCount > 0 {
-			preStripOffset = 16*uint32(header.IKDataCount) + header.IKDataOffset
-		} else {
-			preStripOffset = header.IKDataOffset
-		}
-		fillerSize := header.MorphHeaderListOffset - preStripOffset
-		model.Filler1 = make([]byte, fillerSize)
-		Read(&model.Filler1)
 
 		// Morph Header List
 		model.MorphHeaderList = make([]MorphHeader, header.MorphHeaderCount)
+		f.Seek(int64(modelStart+header.MorphHeaderListOffset), io.SeekStart)
 		Read(&model.MorphHeaderList)
+		//fmt.Println(len(model.MorphHeaderList))
+		//PrintLoc(f)
 
 		// Morph Data Container List
 		model.MorphDataContainerList = make([]MorphDataContainer, header.MorphHeaderCount)
@@ -107,18 +95,19 @@ func FileToStruct(f *os.File) (file TheFile) {
 
 		// Skinning Header List
 		model.SkinningHeaderList = make([]SkinningHeader, header.SkinningHeaderCount)
+		f.Seek(int64(modelStart+header.SkinningHeaderListOffset), io.SeekStart)
 		Read(&model.SkinningHeaderList)
 
 		// Skinning Data Container List
 		model.SkinningDataContainerList = make([]SkinningDataContainer, header.SkinningHeaderCount)
 		for j := 0; j < len(model.SkinningDataContainerList); j++ {
 			model.SkinningDataContainerList[j].Data = make([]SkinningData, model.SkinningHeaderList[j].Count)
-			fmt.Println(model.SkinningHeaderList[j].Count)
 			Read(&model.SkinningDataContainerList[j].Data)
 		}
 
 		// Tristrip Header List
 		model.TristripHeaderList = make([]TristripHeader, header.TristripGroupCount)
+		f.Seek(int64(modelStart+header.TristripHeaderListOffset), io.SeekStart)
 		Read(&model.TristripHeaderList)
 
 		// Tristrip Data Container List
@@ -126,21 +115,17 @@ func FileToStruct(f *os.File) (file TheFile) {
 		for j := 0; j < len(model.TristripDataContainerList); j++ {
 			triheader := &model.TristripHeaderList[j]
 			container := &model.TristripDataContainerList[j]
-			container.Data = make([]TristripData, triheader.IndexCount)
-			for k := 0; k < len(container.Data); k++ {
-				container.Data[k].Data = make([]uint16, triheader.IndexCount)
-				Read(&container.Data[k].Data)
-			}
+			container.Data = make([]uint16, triheader.IndexCount)
+			Read(&container.Data)
 		}
 
 		// Vertex Data
 		model.VertexDataList1 = make([]VertexData, header.VertexCount)
 		model.VertexDataList2 = make([]VertexData, header.VertexCount)
+		f.Seek(int64(modelStart+header.VertexDataOffset), io.SeekStart)
 		Read(&model.VertexDataList1)
 		Read(&model.VertexDataList2)
 		fmt.Println("SUCCESS: Reading Model '" + string(header.Name[:]) + "' Data...")
-		PrintLoc(f)
-
 	}
 	fmt.Println("SUCCESS: Reading Model Data...")
 	return

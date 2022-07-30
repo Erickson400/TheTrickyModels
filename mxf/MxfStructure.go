@@ -55,10 +55,9 @@ type ModelHeader struct { // Size is 396
 }
 
 type ModelData struct {
-	MaterialList              []Material // Size is ModelHeader.MaterialCount
-	BoneList                  []Bone     // Size is ModelHeader.BoneDataCount
-	IKList                    []IK       // Size is ModelHeader.IKDataCount
-	Filler1                   []byte
+	MaterialList              []Material              // Size is ModelHeader.MaterialCount
+	BoneList                  []Bone                  // Size is ModelHeader.BoneDataCount
+	IKList                    []IK                    // Size is ModelHeader.IKDataCount
 	MorphHeaderList           []MorphHeader           // Size is ModelHeader.MorphHeaderCount
 	MorphDataContainerList    []MorphDataContainer    // Size is ModelHeader.MorphHeaderCount
 	SkinningHeaderList        []SkinningHeader        // Size is ModelHeader.SkinningHeaderCount
@@ -143,10 +142,6 @@ type TristripHeader struct { // Size is 16
 }
 
 type TristripDataContainer struct {
-	Data []TristripData // Size is TristripHeader.IndexCount
-}
-
-type TristripData struct {
 	Data []uint16 // Size is TristripHeader.IndexCount
 }
 

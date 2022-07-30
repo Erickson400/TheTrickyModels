@@ -2788,7 +2788,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             }
           ]
         },
@@ -2796,11 +2797,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 90,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 10,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2808,11 +2811,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 80,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 20,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2820,11 +2825,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 60,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 40,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2832,11 +2839,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 40,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 60,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2844,11 +2853,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 30,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 70,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2856,11 +2867,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 10,
-              "BoneID": 2304
+              "Unknown1": 0,
+              "BoneID": 9
             },
             {
               "BoneWeightPercentage": 90,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         },
@@ -2868,7 +2881,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 2305
+              "Unknown1": 1,
+              "BoneID": 9
             }
           ]
         }
@@ -8896,7 +8910,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 1280
+              "Unknown1": 0,
+              "BoneID": 5
             }
           ]
         },
@@ -8904,7 +8919,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 1281
+              "Unknown1": 1,
+              "BoneID": 5
             }
           ]
         }
@@ -47753,11 +47769,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 30,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 70,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -47765,11 +47783,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 20,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 80,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -47777,7 +47797,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         }
@@ -68035,7 +68056,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         }
@@ -72979,11 +73001,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 30,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 70,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -72991,11 +73015,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 20,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 80,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -73003,7 +73029,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         }
@@ -79159,11 +79186,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 30,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 70,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -79171,11 +79200,13 @@
           "Data": [
             {
               "BoneWeightPercentage": 20,
-              "BoneID": 3
+              "Unknown1": 3,
+              "BoneID": 0
             },
             {
               "BoneWeightPercentage": 80,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         },
@@ -79183,7 +79214,8 @@
           "Data": [
             {
               "BoneWeightPercentage": 100,
-              "BoneID": 4
+              "Unknown1": 4,
+              "BoneID": 0
             }
           ]
         }

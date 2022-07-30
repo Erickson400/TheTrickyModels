@@ -132,7 +132,8 @@ type SkinningDataContainer struct {
 
 type SkinningData struct {
 	BoneWeightPercentage uint16
-	BoneID               uint16
+	Unknown1             byte
+	BoneID               byte
 }
 
 type TristripHeader struct { // Size is 16

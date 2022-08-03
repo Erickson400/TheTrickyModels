@@ -42,5 +42,6 @@ func main() {
 	}
 
 	// If all is gucci then procced.
-	MxfToJson(filepath.ToSlash(os.Args[1]), filepath.ToSlash(os.Args[2]))
+	MxfToGltf(filepath.ToSlash(os.Args[1]), filepath.ToSlash(os.Args[2]))
+	// MxfToJson(filepath.ToSlash(os.Args[1]), filepath.ToSlash(os.Args[2]))
 }

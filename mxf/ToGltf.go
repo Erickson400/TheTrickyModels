@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -46,26 +48,43 @@ func StructToGltf(theFile TheFile) {
 			Norms = append(Norms, [3]float32{v.NormalX, v.NormalY, v.NormalZ})
 		}
 
-		// Tristrips
+		// UVs
+		var UVs [][2]float32
+		for _, v := range modelData.VertexDataList1 {
+			UVs = append(UVs, [2]float32{v.UVMapU, v.UVMapV})
+		}
 
-		//var Tris []uint16
-		//for _, v := range modelData.TristripDataContainerList {
-		//	Tris = append(Tris, v.Data...)
-		//}
+		// Materials
+		img_file, err := ioutil.ReadFile("resources/textures_elise/elise1_suit.157.png")
+		if err != nil {
+			panic(err)
+		}
+		imageIdx, err := modeler.WriteImage(doc, "suit", "image/png", bytes.NewReader(img_file))
+		if err != nil {
+			panic(err)
+		}
 
-		// Make primitive meshes for each tristrip container
+		doc.Textures = append(doc.Textures, &gltf.Texture{Source: gltf.Index(imageIdx)})
+		doc.Materials = append(doc.Materials, &gltf.Material{
+			Name: "Material_SuS",
+			PBRMetallicRoughness: &gltf.PBRMetallicRoughness{
+				BaseColorTexture: &gltf.TextureInfo{Index: uint32(0)},
+				MetallicFactor:   gltf.Float(0),
+			},
+		})
+
+		// Make primitive meshes for each Tristrip container
 		var primitives []*gltf.Primitive
-
 		for j := 0; j < len(modelData.TristripDataContainerList); j++ {
-			//fmt.Println(modelData.TristripDataContainerList[j].Data)
-			fmt.Println(len(modelData.VertexDataList1))
 			p := &gltf.Primitive{
 				Mode:    gltf.PrimitiveTriangleStrip,
 				Indices: gltf.Index(modeler.WriteIndices(doc, modelData.TristripDataContainerList[j].Data)),
 				Attributes: map[string]uint32{
-					gltf.POSITION: modeler.WritePosition(doc, Verts),
-					gltf.COLOR_0:  modeler.WriteColor(doc, Norms),
+					gltf.POSITION:   modeler.WritePosition(doc, Verts),
+					gltf.NORMAL:     modeler.WriteColor(doc, Norms),
+					gltf.TEXCOORD_0: modeler.WriteTextureCoord(doc, UVs),
 				},
+				Material: gltf.Index(0),
 			}
 			primitives = append(primitives, p)
 		}
@@ -83,6 +102,10 @@ func StructToGltf(theFile TheFile) {
 			// 		},
 			// 	},
 			// },
+		}
+
+		if len(modelData.TristripDataContainerList) == 0 {
+			continue
 		}
 		doc.Meshes = append(doc.Meshes, mesh)
 		doc.Nodes = append(doc.Nodes, &gltf.Node{Name: "Root" + fmt.Sprint(i), Mesh: gltf.Index(uint32(i))})

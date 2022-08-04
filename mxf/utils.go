@@ -8,6 +8,15 @@ import (
 )
 
 func FileToStruct(f *os.File) (file TheFile) {
+	// Set to true if you want to see reading logs
+	var Debug bool = false
+
+	println := func(a ...any) {
+		if Debug {
+			fmt.Println(a)
+		}
+	}
+
 	// Setup the buffer for reading in little endian
 	Read := func(p any) { //Takes in a Pointer/Address
 		err := binary.Read(f, binary.LittleEndian, p)
@@ -19,24 +28,24 @@ func FileToStruct(f *os.File) (file TheFile) {
 	// Start Reading TheFile
 
 	// File Header
-	fmt.Println("Reading File Header...")
+	println("Reading File Header...")
 	Read(&file.Header)
-	fmt.Println("SUCCESS: Reading File Header")
+	println("SUCCESS: Reading File Header")
 
 	// Model headers
-	fmt.Println("Reading Model Headers...")
+	println("Reading Model Headers...")
 	file.ModelHeaderList = make([]ModelHeader, file.Header.ModelCount)
 	Read(&file.ModelHeaderList)
-	fmt.Println("SUCCESS: Reading Model Headers")
+	println("SUCCESS: Reading Model Headers")
 
 	// Model data
-	fmt.Println("\nReading Model Data...")
+	println("\nReading Model Data...")
 	file.ModelDataList = make([]ModelData, file.Header.ModelCount)
 	for i := 0; i < len(file.ModelDataList); i++ {
 		header := file.ModelHeaderList[i]
 		model := &file.ModelDataList[i]
 		modelStart := file.Header.ModelDataListOffset + header.RelativeOffset
-		fmt.Println("Reading Model '" + string(header.Name[:]) + "' Data...")
+		println("Reading Model '" + string(header.Name[:]) + "' Data...")
 
 		// Materials
 		model.MaterialList = make([]Material, header.MaterialCount)
@@ -57,7 +66,7 @@ func FileToStruct(f *os.File) (file TheFile) {
 		model.MorphHeaderList = make([]MorphHeader, header.MorphHeaderCount)
 		f.Seek(int64(modelStart+header.MorphHeaderListOffset), io.SeekStart)
 		Read(&model.MorphHeaderList)
-		//fmt.Println(len(model.MorphHeaderList))
+		//println(len(model.MorphHeaderList))
 		//PrintLoc(f)
 
 		// Morph Data Container List
@@ -86,9 +95,10 @@ func FileToStruct(f *os.File) (file TheFile) {
 
 		// Tristrip Data Container List
 		model.TristripDataContainerList = make([]TristripDataContainer, header.TristripGroupCount)
-		for j := 0; j < len(model.TristripDataContainerList); j++ {
+		for j := 0; j < len(model.TristripHeaderList); j++ {
 			triheader := &model.TristripHeaderList[j]
 			container := &model.TristripDataContainerList[j]
+			f.Seek(int64(modelStart+triheader.IndexListOffset), io.SeekStart)
 			container.Data = make([]uint16, triheader.IndexCount)
 			Read(&container.Data)
 		}
@@ -99,13 +109,13 @@ func FileToStruct(f *os.File) (file TheFile) {
 		f.Seek(int64(modelStart+header.VertexDataOffset), io.SeekStart)
 		Read(&model.VertexDataList1)
 		Read(&model.VertexDataList2)
-		fmt.Println("SUCCESS: Reading Model '" + string(header.Name[:]) + "' Data...")
+		println("SUCCESS: Reading Model '" + string(header.Name[:]) + "' Data...")
 	}
-	fmt.Println("SUCCESS: Reading Model Data...")
+	println("SUCCESS: Reading Model Data...")
 	return
 }
 
 func PrintLoc(buf *os.File) {
 	m, _ := buf.Seek(0, os.SEEK_CUR)
-	fmt.Println(m)
+	println(m)
 }

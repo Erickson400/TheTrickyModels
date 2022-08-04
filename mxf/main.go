@@ -12,7 +12,8 @@ func main() {
 	// arg1: [mxf file] make sure the textures are on the same dir if its not a board
 	// arg2: [gltf destination path]
 
-	// go run . ./resources/board.mxf  ./
+	// go run . ./resources/board.mxf ./
+	// go run . ./resources/textures_elise/elise_body.mxf ./
 	//-------------------------------------------
 
 	// Help

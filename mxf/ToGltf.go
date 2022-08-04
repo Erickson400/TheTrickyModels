@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/qmuntal/gltf"
@@ -25,16 +25,16 @@ func MxfToGltf(filename string, destination string) {
 
 	// Turn the file's data to a struct then to gltf
 	theFile := FileToStruct(f)
-	StructToGltf(theFile)
+	StructToGltf(theFile, filename)
 }
 
-func StructToGltf(theFile TheFile) {
+func StructToGltf(theFile TheFile, filename string) {
 	doc := gltf.NewDocument()
 
 	// For every model
 	for i := 0; i < int(theFile.Header.ModelCount); i++ {
-		modelHeader := theFile.ModelHeaderList[i]
-		modelData := theFile.ModelDataList[i]
+		modelHeader := &theFile.ModelHeaderList[i]
+		modelData := &theFile.ModelDataList[i]
 
 		// Vertices
 		var Verts [][3]float32
@@ -54,11 +54,16 @@ func StructToGltf(theFile TheFile) {
 			UVs = append(UVs, [2]float32{v.UVMapU, v.UVMapV})
 		}
 
+		// Read texture files from directory
+		MatTextureFiles := LoadTextures(modelData.MaterialList, filename)
+		//fmt.Println(MatTextureFiles)
+
 		// Materials
-		img_file, err := ioutil.ReadFile("resources/textures_elise/elise1_suit.157.png")
+		img_file, err := os.ReadFile("resources/textures_elise/elise1_suit.157.png")
 		if err != nil {
 			panic(err)
 		}
+
 		imageIdx, err := modeler.WriteImage(doc, "suit", "image/png", bytes.NewReader(img_file))
 		if err != nil {
 			panic(err)
@@ -113,4 +118,48 @@ func StructToGltf(theFile TheFile) {
 
 	doc.Scenes[0].Nodes = append(doc.Scenes[0].Nodes, 0)
 	gltf.Save(doc, "./Model.gltf")
+}
+
+func LoadTextures(MatList []Material, filename string) map[string]*os.File {
+	// Function checks if the directory has the required textures.
+
+	// Find required textures and remove duplicates
+	var NeededTextures = make(map[string]*os.File)
+	for _, v := range MatList {
+		// Remove empty spaces from string
+		MatName := strings.ReplaceAll(string(v.MainTextureName[:]), " ", "")
+
+		// Check if name already exists
+		_, exists := NeededTextures[MatName]
+		if exists {
+			continue
+		}
+		NeededTextures[MatName] = &os.File{}
+	}
+
+	// Find the textures in the directory
+	for k := range NeededTextures {
+		p := path.Dir(filename)
+		files, err := os.ReadDir(p)
+		if err != nil {
+			panic(err)
+		}
+		found := false
+		for _, f := range files {
+			if strings.Contains(f.Name(), k) {
+				t, err := os.Open(p + "/" + f.Name())
+				if err != nil {
+					panic(err)
+				}
+				defer t.Close()
+
+				NeededTextures[k] = t
+				found = true
+			}
+		}
+		if !found {
+			panic("Error: Texture not Found.")
+		}
+	}
+	return NeededTextures
 }

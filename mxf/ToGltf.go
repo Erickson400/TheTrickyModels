@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path"
@@ -54,33 +53,34 @@ func StructToGltf(theFile TheFile, filename string) {
 			UVs = append(UVs, [2]float32{v.UVMapU, v.UVMapV})
 		}
 
-		// Read texture files from directory
-		MatTextureFiles := LoadTextures(modelData.MaterialList, filename)
-		//fmt.Println(MatTextureFiles)
-
 		// Materials
-		img_file, err := os.ReadFile("resources/textures_elise/elise1_suit.157.png")
-		if err != nil {
-			panic(err)
-		}
+		for _, v := range modelData.MaterialList {
+			name := Clean(string(v.MainTextureName[:]))
 
-		imageIdx, err := modeler.WriteImage(doc, "suit", "image/png", bytes.NewReader(img_file))
-		if err != nil {
-			panic(err)
-		}
+			f, err := LoadTexture(name, filename)
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
 
-		doc.Textures = append(doc.Textures, &gltf.Texture{Source: gltf.Index(imageIdx)})
-		doc.Materials = append(doc.Materials, &gltf.Material{
-			Name: "Material_SuS",
-			PBRMetallicRoughness: &gltf.PBRMetallicRoughness{
-				BaseColorTexture: &gltf.TextureInfo{Index: uint32(0)},
-				MetallicFactor:   gltf.Float(0),
-			},
-		})
+			Idx, err := modeler.WriteImage(doc, name, "image/png", f)
+			if err != nil {
+				panic(err)
+			}
+			doc.Textures = append(doc.Textures, &gltf.Texture{Source: gltf.Index(Idx)})
+			doc.Materials = append(doc.Materials, &gltf.Material{
+				Name: "SussyMat",
+				PBRMetallicRoughness: &gltf.PBRMetallicRoughness{
+					BaseColorTexture: &gltf.TextureInfo{Index: Idx},
+					MetallicFactor:   gltf.Float(0),
+				},
+			})
+		}
 
 		// Make primitive meshes for each Tristrip container
 		var primitives []*gltf.Primitive
 		for j := 0; j < len(modelData.TristripDataContainerList); j++ {
+			Idx := uint32(modelData.TristripHeaderList[j].MaterialID[0])
 			p := &gltf.Primitive{
 				Mode:    gltf.PrimitiveTriangleStrip,
 				Indices: gltf.Index(modeler.WriteIndices(doc, modelData.TristripDataContainerList[j].Data)),
@@ -89,7 +89,7 @@ func StructToGltf(theFile TheFile, filename string) {
 					gltf.NORMAL:     modeler.WriteColor(doc, Norms),
 					gltf.TEXCOORD_0: modeler.WriteTextureCoord(doc, UVs),
 				},
-				Material: gltf.Index(0),
+				Material: gltf.Index(Idx),
 			}
 			primitives = append(primitives, p)
 		}
@@ -97,16 +97,7 @@ func StructToGltf(theFile TheFile, filename string) {
 		// Make the mesh and append it to the document & Nodes
 		mesh := &gltf.Mesh{
 			Name:       string(modelHeader.Name[:]),
-			Primitives: primitives, //[]*gltf.Primitive{
-			// 	{
-			// 		Mode:    gltf.PrimitiveTriangleStrip,
-			// 		Indices: gltf.Index(modeler.WriteIndices(doc, Tris)),
-			// 		Attributes: map[string]uint32{
-			// 			gltf.POSITION: modeler.WritePosition(doc, Verts),
-			// 			gltf.COLOR_0:  modeler.WriteColor(doc, Norms),
-			// 		},
-			// 	},
-			// },
+			Primitives: primitives,
 		}
 
 		if len(modelData.TristripDataContainerList) == 0 {
@@ -120,46 +111,27 @@ func StructToGltf(theFile TheFile, filename string) {
 	gltf.Save(doc, "./Model.gltf")
 }
 
-func LoadTextures(MatList []Material, filename string) map[string]*os.File {
+func LoadTexture(TexName, filename string) (*os.File, error) {
 	// Function checks if the directory has the required textures.
 
-	// Find required textures and remove duplicates
-	var NeededTextures = make(map[string]*os.File)
-	for _, v := range MatList {
-		// Remove empty spaces from string
-		MatName := strings.ReplaceAll(string(v.MainTextureName[:]), " ", "")
-
-		// Check if name already exists
-		_, exists := NeededTextures[MatName]
-		if exists {
-			continue
-		}
-		NeededTextures[MatName] = &os.File{}
-	}
-
 	// Find the textures in the directory
-	for k := range NeededTextures {
-		p := path.Dir(filename)
-		files, err := os.ReadDir(p)
-		if err != nil {
-			panic(err)
-		}
-		found := false
-		for _, f := range files {
-			if strings.Contains(f.Name(), k) {
-				t, err := os.Open(p + "/" + f.Name())
-				if err != nil {
-					panic(err)
-				}
-				defer t.Close()
-
-				NeededTextures[k] = t
-				found = true
+	p := path.Dir(filename)
+	files, err := os.ReadDir(p)
+	if err != nil {
+		panic(err)
+	}
+	for _, f := range files {
+		if strings.Contains(f.Name(), TexName) {
+			t, err := os.Open(p + "/" + f.Name())
+			if err != nil {
+				panic(err)
 			}
-		}
-		if !found {
-			panic("Error: Texture not Found.")
+			return t, nil
 		}
 	}
-	return NeededTextures
+	return nil, fmt.Errorf("ERROR: Cant find texture image " + TexName)
+}
+
+func Clean(name string) string {
+	return strings.ReplaceAll(name, " ", "")
 }
